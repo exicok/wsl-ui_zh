@@ -104,8 +104,19 @@ jobs:
         run: |
           .\scripts\build-msix.ps1 -Version "${{ steps.msix-version.outputs.msix_version }}"
 
-      - name: Upload MSIX to release
+      - name: Prepare portable exe
+        shell: pwsh
+        run: |
+          $version = "${{ steps.msix-version.outputs.msix_version }}".Split('.')[0..2] -join '.'
+          $src = "src-tauri/target/x86_64-pc-windows-msvc/release/wsl-ui.exe"
+          $dst = "dist/WSL.UI_${version}_x64_portable.exe"
+          Copy-Item $src $dst
+          Write-Host "Created portable exe: $dst"
+
+      - name: Upload MSIX and portable exe to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.release-please.outputs.tag_name }}
-          files: dist/*.msix
+          files: |
+            dist/*.msix
+            dist/*_portable.exe
