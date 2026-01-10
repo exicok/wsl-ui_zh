@@ -24,7 +24,7 @@ $DisplayName = "WSL UI"
 $Description = "A modern WSL2 distribution manager"
 
 # Paths
-$ExePath = Join-Path $ProjectRoot "src-tauri\target\release\wsl2-ui.exe"
+$ExePath = Join-Path $ProjectRoot "src-tauri\target\x86_64-pc-windows-msvc\release\wsl-ui.exe"
 $IconsDir = Join-Path $ProjectRoot "src-tauri\icons"
 $OutputDir = Join-Path $ProjectRoot "dist"
 $StagingDir = Join-Path $OutputDir "msix-staging"
@@ -121,7 +121,7 @@ $Manifest = @"
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
   </Dependencies>
   <Applications>
-    <Application Id="App" Executable="wsl2-ui.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="App" Executable="wsl-ui.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="$DisplayName"
                           Description="$Description"
                           BackgroundColor="transparent"
