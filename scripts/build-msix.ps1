@@ -4,6 +4,8 @@
 
 param(
     [string]$Version = "0.1.0.0",
+    [ValidateSet("x64", "arm64")]
+    [string]$Architecture = "x64",
     [switch]$Sign,
     [string]$CertThumbprint = "7F9F0BCCFFE3E145AC666178D4AD9E95743D26BE",
     [switch]$Install
@@ -23,12 +25,15 @@ $PublisherDisplayName = "Octasoft Ltd"
 $DisplayName = "WSL UI"
 $Description = "A modern WSL2 distribution manager"
 
+# Map architecture to Rust target
+$RustTarget = if ($Architecture -eq "arm64") { "aarch64-pc-windows-msvc" } else { "x86_64-pc-windows-msvc" }
+
 # Paths
-$ExePath = Join-Path $ProjectRoot "src-tauri\target\x86_64-pc-windows-msvc\release\wsl-ui.exe"
+$ExePath = Join-Path $ProjectRoot "src-tauri\target\$RustTarget\release\wsl-ui.exe"
 $IconsDir = Join-Path $ProjectRoot "src-tauri\icons"
 $OutputDir = Join-Path $ProjectRoot "dist"
-$StagingDir = Join-Path $OutputDir "msix-staging"
-$MsixOutput = Join-Path $OutputDir "WSL.UI_${Version}_x64.msix"
+$StagingDir = Join-Path $OutputDir "msix-staging-$Architecture"
+$MsixOutput = Join-Path $OutputDir "WSL.UI_${Version}_$Architecture.msix"
 
 # Find Windows SDK tools by searching for makeappx.exe
 $MakeAppx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "makeappx.exe" -ErrorAction SilentlyContinue |
@@ -55,6 +60,7 @@ if (-not (Test-Path $ExePath)) {
 Write-Host "SDK Path: $SdkBinPath" -ForegroundColor Gray
 Write-Host "Exe Path: $ExePath" -ForegroundColor Gray
 Write-Host "Version: $Version" -ForegroundColor Gray
+Write-Host "Architecture: $Architecture ($RustTarget)" -ForegroundColor Gray
 Write-Host ""
 
 # Clean and create staging directory
@@ -107,7 +113,7 @@ $Manifest = @"
   <Identity Name="$PackageName"
             Publisher="$Publisher"
             Version="$Version"
-            ProcessorArchitecture="x64" />
+            ProcessorArchitecture="$Architecture" />
   <Properties>
     <DisplayName>$DisplayName</DisplayName>
     <PublisherDisplayName>$PublisherDisplayName</PublisherDisplayName>
