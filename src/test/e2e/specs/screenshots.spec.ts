@@ -145,7 +145,9 @@ describe("Screenshot Capture", () => {
       const newButton = await $(selectors.newDistroButton);
       await newButton.click();
       await waitForDialog(selectors.newDistroDialog);
-      await browser.pause(300);
+      // Wait for distro list to load
+      await $('[data-testid="quick-install-content"]').waitForDisplayed({ timeout: 5000 });
+      await browser.pause(500);
       await saveScreenshot("dialog-new-distro");
 
       // Close dialog
@@ -162,7 +164,9 @@ describe("Screenshot Capture", () => {
       // Click download tab
       const downloadTab = await $(selectors.newDistroTabDownload);
       await downloadTab.click();
-      await browser.pause(300);
+      // Wait for download content to load
+      await $('[data-testid="download-content"]').waitForDisplayed({ timeout: 5000 });
+      await browser.pause(500);
       await saveScreenshot("dialog-new-distro-download");
 
       const cancelButton = await $(selectors.newDistroCancelButton);
@@ -178,7 +182,9 @@ describe("Screenshot Capture", () => {
       // Click container tab
       const containerTab = await $(selectors.newDistroTabContainer);
       await containerTab.click();
-      await browser.pause(300);
+      // Wait for container content to load
+      await $('[data-testid="container-content"]').waitForDisplayed({ timeout: 5000 });
+      await browser.pause(500);
       await saveScreenshot("dialog-new-distro-container");
 
       const cancelButton = await $(selectors.newDistroCancelButton);
@@ -194,7 +200,9 @@ describe("Screenshot Capture", () => {
       // Click LXC tab
       const lxcTab = await $(selectors.newDistroTabLxc);
       await lxcTab.click();
-      await browser.pause(300);
+      // Wait for LXC content to load
+      await $('[data-testid="lxc-content"]').waitForDisplayed({ timeout: 5000 });
+      await browser.pause(500);
       await saveScreenshot("dialog-new-distro-lxc");
 
       const cancelButton = await $(selectors.newDistroCancelButton);

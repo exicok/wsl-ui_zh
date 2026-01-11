@@ -576,6 +576,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
         <div
           role="dialog"
           aria-modal="true"
+          data-testid="new-distro-dialog"
           className="relative bg-theme-bg-secondary border border-theme-border-secondary rounded-2xl shadow-2xl shadow-black/50 max-w-4xl w-full mx-4 h-[95vh] min-h-[500px] flex flex-col overflow-hidden animate-fade-slide-in"
         >
           {/* Top accent line */}
@@ -788,7 +789,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                     <span className="text-sm">No distributions available</span>
                   </div>
                 ) : (
-                  <div className="animate-fade-in">
+                  <div className="animate-fade-in" data-testid="quick-install-content">
                     {/* Family Filter Tabs */}
                     <div className="flex gap-2 mb-4 flex-wrap">
                       <button
@@ -919,7 +920,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                     />
                   </div>
                 ) : (
-                  <>
+                  <div data-testid="download-content">
                     {/* Family Filter Tabs */}
                     <div className="flex gap-2 mb-4 flex-wrap">
                       <button
@@ -1036,7 +1037,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                         className="w-full px-3 py-2.5 bg-theme-bg-primary border border-theme-border-secondary rounded-lg text-theme-text-primary placeholder-theme-text-muted text-sm font-mono focus:outline-none focus:border-blue-500/50"
                       />
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             )}
@@ -1051,11 +1052,13 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                     <span className="text-xs text-theme-text-muted">Enable it in Settings &gt; Distribution Sources</span>
                   </div>
                 ) : (
-                  <LxcCatalogBrowser
-                    selectedDistro={selectedLxcDistro}
-                    onSelect={handleSelectLxcDistro}
-                    disabled={isCreating}
-                  />
+                  <div data-testid="lxc-content">
+                    <LxcCatalogBrowser
+                      selectedDistro={selectedLxcDistro}
+                      onSelect={handleSelectLxcDistro}
+                      disabled={isCreating}
+                    />
+                  </div>
                 )}
               </div>
             )}
@@ -1075,7 +1078,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                     </button>
                   </div>
                 ) : (
-                  <>
+                  <div data-testid="container-content">
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       {containerImages.map((image, index) => {
                         const isSelected = selectedContainer?.id === image.id && !useCustomImage;
@@ -1153,7 +1156,7 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
                         className="w-full px-3 py-2.5 bg-theme-bg-primary border border-theme-border-secondary rounded-lg text-theme-text-primary placeholder-theme-text-muted text-sm font-mono focus:outline-none focus:border-orange-500/50"
                       />
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             )}
