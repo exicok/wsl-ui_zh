@@ -5,6 +5,15 @@ All notable changes to WSL UI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0](https://github.com/octasoft-ltd/wsl-ui/compare/v0.4.0...v0.5.0) (2026-01-11)
+
+
+### Features
+
+* Accessibility and high contrast theme ([5310b2f](https://github.com/octasoft-ltd/wsl-ui/commit/5310b2f55f5fc28389b81d6a923b8a6687637177))
+* Accessibility and high contrast theme ([c5c3a4c](https://github.com/octasoft-ltd/wsl-ui/commit/c5c3a4c717d50be8837e560e777cee7f135bb9d7))
+* tidy rust warnings ([13b1ffe](https://github.com/octasoft-ltd/wsl-ui/commit/13b1ffec499a0410529e8f5f3dce98fb710c235d))
+
 ## [0.4.0](https://github.com/octasoft-ltd/wsl-ui/compare/v0.3.0...v0.4.0) (2026-01-10)
 
 
