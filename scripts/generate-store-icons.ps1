@@ -16,6 +16,7 @@ $RequiredIcons = @{
     "Square44x44Logo.png" = @{ Width = 44; Height = 44 }
     "Square71x71Logo.png" = @{ Width = 71; Height = 71 }
     "Square150x150Logo.png" = @{ Width = 150; Height = 150 }
+    "Square300x300Logo.png" = @{ Width = 300; Height = 300 }
     "Square310x310Logo.png" = @{ Width = 310; Height = 310 }
     "StoreLogo.png" = @{ Width = 50; Height = 50 }
     "Wide310x150Logo.png" = @{ Width = 310; Height = 150 }
