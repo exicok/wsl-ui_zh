@@ -8,7 +8,9 @@ Built with [Tauri](https://tauri.app/) (Rust) and [React](https://react.dev/)
 
 **Developed by [Octasoft Ltd](https://www.octasoft.co.uk)**
 
-<video src="docs/videos/wsl-ui-demo.mp4" controls width="100%"></video>
+[![Main Dashboard](docs/screenshots/main-distro-list.png)](docs/videos/wsl-ui-demo.mp4)
+
+> **[Watch Demo Video](docs/videos/wsl-ui-demo.mp4)** - See WSL UI in action
 
 ## Features
 
