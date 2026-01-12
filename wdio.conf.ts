@@ -136,8 +136,8 @@ export const config: Options.Testrunner = {
   // =========
   framework: "mocha",
   reporters: [
-    // Only show spec reporter (console test tree) in verbose mode
-    ...(isVerbose ? ["spec" as const] : []),
+    // Always include spec reporter - without it, tests hang due to output buffering issues
+    "spec",
     [
       "junit",
       {
@@ -192,16 +192,19 @@ export const config: Options.Testrunner = {
       env,
     });
 
-    // Only forward tauri-driver output in verbose mode
-    if (isVerbose) {
-      tauriDriver.stdout?.on("data", (data) => {
+    // Always consume tauri-driver output to prevent pipe buffer from filling up and causing hangs
+    // Only log to console in verbose mode
+    tauriDriver.stdout?.on("data", (data) => {
+      if (isVerbose) {
         console.log(`[tauri-driver] ${data}`);
-      });
+      }
+    });
 
-      tauriDriver.stderr?.on("data", (data) => {
+    tauriDriver.stderr?.on("data", (data) => {
+      if (isVerbose) {
         console.error(`[tauri-driver] ${data}`);
-      });
-    }
+      }
+    });
 
     // Wait for tauri-driver to be ready
     await new Promise((resolve) => setTimeout(resolve, 2000));
