@@ -14,10 +14,10 @@
       {
         "label": "main",
         "title": "WSL UI",
-        "width": 1024,
-        "height": 800,
+        "width": 1280,
+        "height": 720,
         "minWidth": 800,
-        "minHeight": 800,
+        "minHeight": 720,
         "resizable": true,
         "fullscreen": false,
         "visible": true

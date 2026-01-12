@@ -63,7 +63,7 @@ export function Header({ onOpenSettings }: HeaderProps) {
 
   return (
     <>
-      <header className="relative flex items-center justify-between px-6 py-4 border-b border-theme-border-primary bg-gradient-to-r from-theme-bg-primary via-theme-bg-secondary to-theme-bg-primary">
+      <header className="relative flex items-center justify-between px-6 py-3 border-b border-theme-border-primary bg-gradient-to-r from-theme-bg-primary via-theme-bg-secondary to-theme-bg-primary">
         {/* Ambient glow effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-1/4 w-96 h-32 bg-[#f97316]/5 blur-3xl rounded-full" />

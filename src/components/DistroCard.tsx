@@ -55,7 +55,7 @@ function DistroCardComponent({ distro, index = 0 }: DistroCardProps) {
     <>
       <div
         data-testid={`distro-card-${distro.name}`}
-        className={`module-card p-5 animate-fade-slide-in ${staggerClass} ${menuOpen ? 'z-50' : ''}`}
+        className={`module-card p-4 animate-fade-slide-in ${staggerClass} ${menuOpen ? 'z-50' : ''}`}
       >
         {/* Badges row: WSL (left) + Primary + State (right) */}
         <div className="flex items-center justify-between mb-3">
@@ -99,7 +99,7 @@ function DistroCardComponent({ distro, index = 0 }: DistroCardProps) {
         </div>
 
         {/* Distro name and info */}
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-3 mb-4">
           {/* Status indicator with pulsing ring */}
           <div className={`status-indicator ${isRunning ? 'running' : ''}`}>
             <div
@@ -125,7 +125,7 @@ function DistroCardComponent({ distro, index = 0 }: DistroCardProps) {
         </div>
 
         {/* Telemetry section */}
-        <div className="grid grid-cols-3 gap-4 mb-5 p-3 bg-theme-bg-primary/50 rounded-lg border border-theme-border-primary">
+        <div className="grid grid-cols-3 gap-4 mb-4 p-2.5 bg-theme-bg-primary/50 rounded-lg border border-theme-border-primary">
           {/* Disk */}
           <div className="text-center">
             <span className="data-label block mb-1">Disk</span>

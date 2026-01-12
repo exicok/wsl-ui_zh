@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { invoke } from "@tauri-apps/api/core";
 import { useActionsStore } from "./actionsStore";
-import type { CustomAction, StartupConfig } from "../types/actions";
+import type { CustomAction } from "../types/actions";
 
 // Note: @tauri-apps/api/core is mocked in test/setup.ts
 
@@ -15,18 +15,9 @@ const mockAction: CustomAction = {
   requiresSudo: false,
   requiresStopped: false,
   runInTerminal: false,
+  runOnStartup: false,
   showOutput: true,
   order: 0,
-};
-
-const mockStartupConfig: StartupConfig = {
-  distroName: "Ubuntu",
-  actions: [
-    { id: "startup-1", actionId: "action-1", continueOnError: true, timeout: 60 },
-    { id: "startup-2", actionId: "action-2", continueOnError: true, timeout: 60 },
-  ],
-  runOnAppStart: true,
-  enabled: true,
 };
 
 describe("actionsStore", () => {
@@ -34,11 +25,11 @@ describe("actionsStore", () => {
     // Reset store state
     useActionsStore.setState({
       actions: [],
-      startupConfigs: [],
       isLoading: false,
       error: null,
       executionResult: null,
       isExecuting: false,
+      startupActionOutput: null,
     });
     vi.clearAllMocks();
   });
@@ -47,11 +38,11 @@ describe("actionsStore", () => {
     it("should have empty actions initially", () => {
       const state = useActionsStore.getState();
       expect(state.actions).toEqual([]);
-      expect(state.startupConfigs).toEqual([]);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
       expect(state.executionResult).toBeNull();
       expect(state.isExecuting).toBe(false);
+      expect(state.startupActionOutput).toBeNull();
     });
   });
 
@@ -357,146 +348,50 @@ describe("actionsStore", () => {
     });
   });
 
-  describe("startup configs", () => {
-    describe("fetchStartupConfigs", () => {
-      it("stores fetched startup configs", async () => {
-        const configs = [mockStartupConfig];
-        vi.mocked(invoke).mockResolvedValue(configs);
-
-        await useActionsStore.getState().fetchStartupConfigs();
-
-        expect(useActionsStore.getState().startupConfigs).toEqual(configs);
-      });
-
-      it("calls invoke with correct command", async () => {
-        vi.mocked(invoke).mockResolvedValue([]);
-
-        await useActionsStore.getState().fetchStartupConfigs();
-
-        expect(invoke).toHaveBeenCalledWith("get_startup_configs");
-      });
+  describe("startupActionOutput", () => {
+    it("has null startup action output initially", () => {
+      const state = useActionsStore.getState();
+      expect(state.startupActionOutput).toBeNull();
     });
 
-    describe("getStartupConfig", () => {
-      it("returns config for distro", async () => {
-        vi.mocked(invoke).mockResolvedValue(mockStartupConfig);
+    it("sets startup action output", () => {
+      const output = {
+        actionName: "Test Action",
+        distro: "Ubuntu",
+        output: "Hello World",
+        error: undefined,
+      };
 
-        const result = await useActionsStore
-          .getState()
-          .getStartupConfig("Ubuntu");
+      useActionsStore.getState().setStartupActionOutput(output);
 
-        expect(result).toEqual(mockStartupConfig);
-      });
-
-      it("returns null when not found", async () => {
-        vi.mocked(invoke).mockResolvedValue(null);
-
-        const result = await useActionsStore
-          .getState()
-          .getStartupConfig("NonExistent");
-
-        expect(result).toBeNull();
-      });
-
-      it("returns null on error", async () => {
-        vi.mocked(invoke).mockRejectedValue(new Error("Error"));
-
-        const result = await useActionsStore
-          .getState()
-          .getStartupConfig("Ubuntu");
-
-        expect(result).toBeNull();
-      });
+      expect(useActionsStore.getState().startupActionOutput).toEqual(output);
     });
 
-    describe("saveStartupConfig", () => {
-      it("updates startup configs after save", async () => {
-        const configs = [mockStartupConfig];
-        vi.mocked(invoke).mockResolvedValue(configs);
+    it("sets startup action output with error", () => {
+      const output = {
+        actionName: "Failing Action",
+        distro: "Ubuntu",
+        output: "",
+        error: "Command failed",
+      };
 
-        await useActionsStore.getState().saveStartupConfig(mockStartupConfig);
+      useActionsStore.getState().setStartupActionOutput(output);
 
-        expect(useActionsStore.getState().startupConfigs).toEqual(configs);
-      });
-
-      it("sets error on save failure", async () => {
-        vi.mocked(invoke).mockRejectedValue(new Error("Save failed"));
-
-        await useActionsStore.getState().saveStartupConfig(mockStartupConfig);
-
-        expect(useActionsStore.getState().error).toBe("Save failed");
-      });
+      expect(useActionsStore.getState().startupActionOutput).toEqual(output);
     });
 
-    describe("deleteStartupConfig", () => {
-      it("updates startup configs after delete", async () => {
-        vi.mocked(invoke).mockResolvedValue([]);
-
-        await useActionsStore.getState().deleteStartupConfig("Ubuntu");
-
-        expect(useActionsStore.getState().startupConfigs).toEqual([]);
+    it("clears startup action output", () => {
+      useActionsStore.setState({
+        startupActionOutput: {
+          actionName: "Test",
+          distro: "Ubuntu",
+          output: "test",
+        },
       });
 
-      it("calls invoke with correct command", async () => {
-        vi.mocked(invoke).mockResolvedValue([]);
+      useActionsStore.getState().clearStartupActionOutput();
 
-        await useActionsStore.getState().deleteStartupConfig("Ubuntu");
-
-        expect(invoke).toHaveBeenCalledWith("delete_startup_config", {
-          distroName: "Ubuntu",
-        });
-      });
-    });
-
-    describe("executeStartupActions", () => {
-      it("returns results on success", async () => {
-        const results = [{ success: true, output: "Done" }];
-        vi.mocked(invoke).mockResolvedValue(results);
-
-        const returned = await useActionsStore
-          .getState()
-          .executeStartupActions("Ubuntu");
-
-        expect(returned).toEqual(results);
-      });
-
-      it("sets executing state", async () => {
-        vi.mocked(invoke).mockResolvedValue([]);
-
-        const promise = useActionsStore
-          .getState()
-          .executeStartupActions("Ubuntu");
-
-        expect(useActionsStore.getState().isExecuting).toBe(true);
-
-        await promise;
-
-        expect(useActionsStore.getState().isExecuting).toBe(false);
-      });
-
-      it("returns empty array on error", async () => {
-        vi.mocked(invoke).mockRejectedValue(new Error("Error"));
-
-        const result = await useActionsStore
-          .getState()
-          .executeStartupActions("Ubuntu");
-
-        expect(result).toEqual([]);
-      });
-
-      it("passes optional id parameter", async () => {
-        vi.mocked(invoke).mockResolvedValue([]);
-
-        await useActionsStore
-          .getState()
-          .executeStartupActions("Ubuntu", "guid-123");
-
-        expect(invoke).toHaveBeenCalledWith("execute_startup_actions", {
-          distroName: "Ubuntu",
-          id: "guid-123",
-        });
-      });
+      expect(useActionsStore.getState().startupActionOutput).toBeNull();
     });
   });
 });
-

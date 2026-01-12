@@ -409,7 +409,7 @@ export function QuickActionsMenu({ distro, disabled, onOpenChange }: QuickAction
           data-testid="quick-actions-menu"
           role="menu"
           aria-label={`Actions for ${distro.name}`}
-          className="absolute right-0 top-full mt-2 w-56 bg-theme-bg-secondary border border-theme-border-secondary rounded-xl shadow-xl shadow-black/70 z-[100] overflow-hidden"
+          className="absolute right-full top-0 mr-2 w-56 bg-theme-bg-secondary border border-theme-border-secondary rounded-xl shadow-xl shadow-black/70 z-[100] overflow-hidden"
         >
           {/* Top accent line */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-theme-accent-primary/30 to-transparent" />

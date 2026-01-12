@@ -146,7 +146,7 @@ export function DistroList() {
   return (
     <div>
       {/* Filter Bar - Two rows on mobile, one row on desktop */}
-      <div className="sticky top-0 z-20 -mx-6 px-6 py-4 mb-2 bg-theme-bg-primary/95 backdrop-blur-sm border-b border-theme-border-primary/50">
+      <div className="sticky top-0 z-20 -mx-6 px-6 py-3 mb-1 bg-theme-bg-primary/95 backdrop-blur-sm border-b border-theme-border-primary/50">
         <div className="relative">
         {/* IP Address - Always top right */}
         {wslIp && (

@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import type { Distribution, WslStatus } from "../types/distribution";
 import { wslService } from "../services/wslService";
+import { actionsService } from "../services/actionsService";
+import { useActionsStore } from "./actionsStore";
 import { parseError, logError, formatError } from "../utils/errors";
-import { logger } from "../utils/logger";
+import { logger, info, warn } from "../utils/logger";
 
 interface DistroStore {
   distributions: Distribution[];
@@ -202,6 +204,35 @@ export const useDistroStore = create<DistroStore>((set, get) => ({
     try {
       await wslService.startDistribution(name, id);
       await get().fetchDistros();
+
+      // Execute startup actions (custom actions with runOnStartup enabled)
+      try {
+        const startupActions = await actionsService.getStartupActionsForDistro(name);
+        if (startupActions.length > 0) {
+          info(`[distroStore] Running ${startupActions.length} startup action(s) for ${name}`);
+          set({ actionInProgress: `Running startup actions for ${name}...` });
+
+          for (const action of startupActions) {
+            try {
+              const result = await actionsService.executeAction(action.id, name, id);
+              // If action has showOutput enabled, show the output dialog
+              if (action.showOutput && result) {
+                useActionsStore.getState().setStartupActionOutput({
+                  actionName: action.name,
+                  distro: name,
+                  output: result.output,
+                  error: result.error,
+                });
+              }
+            } catch (e) {
+              warn(`[distroStore] Startup action '${action.name}' failed: ${e}`);
+            }
+          }
+        }
+      } catch (startupError) {
+        // Log but don't fail the start operation if startup actions fail
+        warn(`[distroStore] Failed to run startup actions for ${name}: ${startupError}`);
+      }
     } catch (error) {
       const appError = parseError(error);
       logError(appError, "distroStore.startDistro");
@@ -374,6 +405,35 @@ export const useDistroStore = create<DistroStore>((set, get) => ({
     try {
       await wslService.restartDistribution(name, id);
       await get().fetchDistros();
+
+      // Execute startup actions (custom actions with runOnStartup enabled)
+      try {
+        const startupActions = await actionsService.getStartupActionsForDistro(name);
+        if (startupActions.length > 0) {
+          info(`[distroStore] Running ${startupActions.length} startup action(s) for ${name}`);
+          set({ actionInProgress: `Running startup actions for ${name}...` });
+
+          for (const action of startupActions) {
+            try {
+              const result = await actionsService.executeAction(action.id, name, id);
+              // If action has showOutput enabled, show the output dialog
+              if (action.showOutput && result) {
+                useActionsStore.getState().setStartupActionOutput({
+                  actionName: action.name,
+                  distro: name,
+                  output: result.output,
+                  error: result.error,
+                });
+              }
+            } catch (e) {
+              warn(`[distroStore] Startup action '${action.name}' failed: ${e}`);
+            }
+          }
+        }
+      } catch (startupError) {
+        // Log but don't fail the restart operation if startup actions fail
+        warn(`[distroStore] Failed to run startup actions for ${name}: ${startupError}`);
+      }
     } catch (error) {
       const appError = parseError(error);
       logError(appError, "distroStore.restartDistro");

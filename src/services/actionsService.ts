@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { CustomAction, StartupConfig } from "../types/actions";
+import type { CustomAction } from "../types/actions";
 import { debug, info } from "../utils/logger";
 
 export interface ActionResult {
@@ -110,56 +110,12 @@ export const actionsService = {
     return await invoke<boolean>("check_action_applies", { actionId, distro });
   },
 
-  // Startup Actions
-
   /**
-   * Get all startup configurations
+   * Get all custom actions that should run on startup for a specific distribution
    */
-  async getStartupConfigs(): Promise<StartupConfig[]> {
-    debug("[actionsService] Getting startup configs");
-    return await invoke<StartupConfig[]>("get_startup_configs");
-  },
-
-  /**
-   * Get startup config for a specific distribution
-   */
-  async getStartupConfig(distroName: string): Promise<StartupConfig | null> {
-    debug(`[actionsService] Getting startup config for: ${distroName}`);
-    return await invoke<StartupConfig | null>("get_startup_config", { distroName });
-  },
-
-  /**
-   * Save startup config for a distribution
-   */
-  async saveStartupConfig(config: StartupConfig): Promise<StartupConfig[]> {
-    info(`[actionsService] Saving startup config for: ${config.distroName}`);
-    return await invoke<StartupConfig[]>("save_startup_config", { config });
-  },
-
-  /**
-   * Delete startup config for a distribution
-   */
-  async deleteStartupConfig(distroName: string): Promise<StartupConfig[]> {
-    info(`[actionsService] Deleting startup config for: ${distroName}`);
-    return await invoke<StartupConfig[]>("delete_startup_config", { distroName });
-  },
-
-  /**
-   * Execute startup actions for a distribution
-   * @param distroName - The distribution name
-   * @param id - Optional distribution GUID for reliable identification
-   */
-  async executeStartupActions(distroName: string, id?: string): Promise<ActionResult[]> {
-    info(`[actionsService] Executing startup actions for: ${distroName}`);
-    return await invoke<ActionResult[]>("execute_startup_actions", { distroName, id });
-  },
-
-  /**
-   * Get list of distributions configured for app startup
-   */
-  async getAppStartupDistros(): Promise<string[]> {
-    debug("[actionsService] Getting app startup distros");
-    return await invoke<string[]>("get_app_startup_distros");
+  async getStartupActionsForDistro(distroName: string): Promise<CustomAction[]> {
+    debug(`[actionsService] Getting startup actions for: ${distroName}`);
+    return await invoke<CustomAction[]>("get_startup_actions_for_distro", { distroName });
   },
 };
 

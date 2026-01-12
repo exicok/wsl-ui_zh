@@ -61,9 +61,9 @@ export function getTerminalPresetsWithStatus(installedTerminals: InstalledTermin
   });
 }
 
-export type SettingsTab = "app" | "appearance" | "polling" | "timeouts" | "executables" | "wsl-global" | "wsl-distro" | "actions" | "startup" | "distros" | "sources" | "privacy" | "about";
+export type SettingsTab = "app" | "appearance" | "polling" | "timeouts" | "executables" | "wsl-global" | "wsl-distro" | "actions" | "distros" | "sources" | "privacy" | "about";
 
-export type SettingsIconName = "settings" | "palette" | "refresh" | "clock" | "terminal" | "server" | "folder" | "sparkles" | "play" | "grid" | "download" | "shield" | "info";
+export type SettingsIconName = "settings" | "palette" | "refresh" | "clock" | "terminal" | "server" | "folder" | "sparkles" | "grid" | "download" | "shield" | "info";
 
 export interface SettingsTabConfig {
   id: SettingsTab;
@@ -80,7 +80,6 @@ export const SETTINGS_TABS: SettingsTabConfig[] = [
   { id: "wsl-global", label: "WSL Global", icon: "server" },
   { id: "wsl-distro", label: "Per-Distribution", icon: "folder" },
   { id: "actions", label: "Custom Actions", icon: "sparkles" },
-  { id: "startup", label: "Startup", icon: "play" },
   { id: "distros", label: "Distro Catalog", icon: "grid" },
   { id: "sources", label: "Remote Sources", icon: "download" },
   { id: "privacy", label: "Privacy", icon: "shield" },

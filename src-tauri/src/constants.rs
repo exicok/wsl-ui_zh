@@ -18,9 +18,6 @@ pub const CONFIG_FILE_SETTINGS: &str = "settings.json";
 /// Custom actions configuration file
 pub const CONFIG_FILE_ACTIONS: &str = "custom-actions.json";
 
-/// Startup actions configuration file
-pub const CONFIG_FILE_STARTUP: &str = "startup-configs.json";
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -36,6 +33,5 @@ mod tests {
     fn test_config_files_have_json_extension() {
         assert!(CONFIG_FILE_SETTINGS.ends_with(".json"));
         assert!(CONFIG_FILE_ACTIONS.ends_with(".json"));
-        assert!(CONFIG_FILE_STARTUP.ends_with(".json"));
     }
 }

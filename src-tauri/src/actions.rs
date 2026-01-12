@@ -1,4 +1,4 @@
-use crate::constants::{CONFIG_FILE_ACTIONS, CONFIG_FILE_STARTUP};
+use crate::constants::CONFIG_FILE_ACTIONS;
 use crate::error::AppError;
 use crate::utils::{get_config_file, is_mock_mode};
 use crate::wsl::executor::wsl_executor;
@@ -12,9 +12,6 @@ use std::fs;
 
 /// Default custom actions JSON embedded at compile time
 const DEFAULT_CUSTOM_ACTIONS_JSON: &str = include_str!("../resources/default-custom-actions.json");
-
-/// Default startup configs JSON embedded at compile time
-const DEFAULT_STARTUP_CONFIGS_JSON: &str = include_str!("../resources/default-startup-configs.json");
 
 /// Defines which distributions an action targets
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -74,6 +71,8 @@ pub struct CustomAction {
     pub requires_stopped: bool,
     #[serde(default)]
     pub run_in_terminal: bool,
+    #[serde(default)]
+    pub run_on_startup: bool,
     pub order: i32,
 }
 
@@ -429,211 +428,11 @@ pub fn import_actions_from_file(path: &str, merge: bool) -> Result<Vec<CustomAct
     import_actions(&json, merge)
 }
 
-// ============ Startup Actions ============
-
-/// Startup action configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct StartupAction {
-    pub id: String,
-    pub action_id: String,     // Reference to custom action
-    pub command: Option<String>, // Inline command if action_id is empty
-    pub continue_on_error: bool,
-    pub timeout: u32,
-}
-
-/// Startup configuration per distribution
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct StartupConfig {
-    pub distro_name: String,
-    pub actions: Vec<StartupAction>,
-    pub run_on_app_start: bool,
-    pub enabled: bool,
-}
-
-/// Get default startup configs from embedded JSON
-fn get_default_startup_configs() -> Vec<StartupConfig> {
-    serde_json::from_str(DEFAULT_STARTUP_CONFIGS_JSON)
-        .expect("Failed to parse embedded default-startup-configs.json - this is a bug")
-}
-
-// Thread-local mock storage for startup configs in e2e tests
-thread_local! {
-    static MOCK_STARTUP_CONFIGS: RefCell<Option<Vec<StartupConfig>>> = RefCell::new(None);
-}
-
-/// Reset mock startup configs to defaults (for e2e testing)
-pub fn reset_mock_startup_configs() {
-    if is_mock_mode() {
-        MOCK_STARTUP_CONFIGS.with(|configs| {
-            *configs.borrow_mut() = Some(get_default_startup_configs());
-        });
-    }
-}
-
-/// Load all startup configurations, or create from defaults if not exists
-pub fn load_startup_configs() -> Vec<StartupConfig> {
-    // In mock mode, use thread-local storage instead of real file
-    if is_mock_mode() {
-        return MOCK_STARTUP_CONFIGS.with(|configs| {
-            let mut configs = configs.borrow_mut();
-            if configs.is_none() {
-                *configs = Some(get_default_startup_configs());
-            }
-            configs.clone().unwrap()
-        });
-    }
-
-    let path = get_config_file(CONFIG_FILE_STARTUP);
-
-    if path.exists() {
-        match fs::read_to_string(&path) {
-            Ok(content) => {
-                match serde_json::from_str(&content) {
-                    Ok(configs) => return configs,
-                    Err(e) => {
-                        eprintln!("Warning: Failed to parse startup-configs.json: {}. Using defaults.", e);
-                    }
-                }
-            }
-            Err(e) => {
-                eprintln!("Warning: Failed to read startup-configs.json: {}. Using defaults.", e);
-            }
-        }
-    }
-
-    // Create startup configs file from defaults
-    let defaults = get_default_startup_configs();
-    if let Err(e) = save_startup_configs(&defaults) {
-        eprintln!("Warning: Failed to create startup-configs.json: {}", e);
-    }
-    defaults
-}
-
-/// Save startup configurations
-fn save_startup_configs(configs: &[StartupConfig]) -> Result<(), String> {
-    // In mock mode, save to thread-local storage instead of real file
-    if is_mock_mode() {
-        MOCK_STARTUP_CONFIGS.with(|mock_configs| {
-            *mock_configs.borrow_mut() = Some(configs.to_vec());
-        });
-        return Ok(());
-    }
-
-    let path = get_config_file(CONFIG_FILE_STARTUP);
-    let content = serde_json::to_string_pretty(configs)
-        .map_err(|e| format!("Failed to serialize startup configs: {}", e))?;
-
-    fs::write(&path, content).map_err(|e| format!("Failed to write startup configs: {}", e))
-}
-
-/// Get startup config for a specific distribution
-pub fn get_startup_config(distro_name: &str) -> Option<StartupConfig> {
-    let configs = load_startup_configs();
-    configs.into_iter().find(|c| c.distro_name == distro_name)
-}
-
-/// Save/update startup config for a distribution
-pub fn save_startup_config(config: StartupConfig) -> Result<Vec<StartupConfig>, String> {
-    let mut configs = load_startup_configs();
-
-    if let Some(idx) = configs.iter().position(|c| c.distro_name == config.distro_name) {
-        configs[idx] = config;
-    } else {
-        configs.push(config);
-    }
-
-    save_startup_configs(&configs)?;
-    Ok(configs)
-}
-
-/// Delete startup config for a distribution
-pub fn delete_startup_config(distro_name: &str) -> Result<Vec<StartupConfig>, String> {
-    let mut configs = load_startup_configs();
-    configs.retain(|c| c.distro_name != distro_name);
-    save_startup_configs(&configs)?;
-    Ok(configs)
-}
-
-/// Execute startup actions for a distribution
-/// If `id` is provided, uses `--distribution-id` for more reliable identification
-pub fn execute_startup_actions(distro_name: &str, id: Option<&str>) -> Result<Vec<ActionResult>, String> {
-    let config = match get_startup_config(distro_name) {
-        Some(c) if c.enabled => c,
-        _ => return Ok(vec![]), // No config or disabled
-    };
-
-    let custom_actions = load_actions();
-    let mut results = vec![];
-
-    for startup_action in &config.actions {
-        // Determine the command to run
-        let command = if !startup_action.action_id.is_empty() {
-            // Use command from referenced custom action
-            custom_actions
-                .iter()
-                .find(|a| a.id == startup_action.action_id)
-                .map(|a| substitute_variables(&a.command, distro_name, id))
-        } else {
-            // Use inline command
-            startup_action.command.as_ref().map(|c| substitute_variables(c, distro_name, id))
-        };
-
-        let command = match command {
-            Some(c) if !c.is_empty() => c,
-            _ => continue, // Skip if no command
-        };
-
-        if is_mock_mode() {
-            std::thread::sleep(std::time::Duration::from_millis(500));
-            results.push(ActionResult {
-                success: true,
-                output: format!("Mock startup: {}", command),
-                error: None,
-            });
-            continue;
-        }
-
-        // Execute with timeout (30 seconds default for startup commands)
-        let exec_result = wsl_executor()
-            .exec_with_timeout(distro_name, id, &command, 30);
-
-        let result = match exec_result {
-            Ok(output) => ActionResult {
-                success: output.success,
-                output: output.stdout,
-                error: if output.stderr.is_empty() {
-                    None
-                } else {
-                    Some(output.stderr)
-                },
-            },
-            Err(e) => ActionResult {
-                success: false,
-                output: String::new(),
-                error: Some(e.to_string()),
-            },
-        };
-
-        // If failed and not continue on error, stop
-        if !result.success && !startup_action.continue_on_error {
-            results.push(result);
-            break;
-        }
-
-        results.push(result);
-    }
-
-    Ok(results)
-}
-
-/// Get list of distributions configured for app startup
-pub fn get_app_startup_distros() -> Vec<String> {
-    load_startup_configs()
+/// Get all custom actions that should run on startup for a specific distribution
+pub fn get_startup_actions_for_distro(distro_name: &str) -> Vec<CustomAction> {
+    load_actions()
         .into_iter()
-        .filter(|c| c.enabled && c.run_on_app_start)
-        .map(|c| c.distro_name)
+        .filter(|action| action.run_on_startup && action_applies_to_distro(action, distro_name))
         .collect()
 }
 
@@ -653,6 +452,7 @@ mod tests {
             requires_sudo: false,
             requires_stopped: false,
             run_in_terminal: false,
+            run_on_startup: false,
             order: 0,
         }
     }

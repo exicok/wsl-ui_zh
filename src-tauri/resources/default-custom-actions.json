@@ -13,6 +13,7 @@
     "requiresSudo": true,
     "requiresStopped": false,
     "runInTerminal": true,
+    "runOnStartup": false,
     "order": 0
   },
   {
@@ -27,6 +28,8 @@
     "showOutput": true,
     "requiresSudo": false,
     "requiresStopped": false,
+    "runInTerminal": false,
+    "runOnStartup": false,
     "order": 1
   }
 ]

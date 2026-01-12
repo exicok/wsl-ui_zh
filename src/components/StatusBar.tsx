@@ -145,7 +145,7 @@ export function StatusBar() {
   })() : null;
 
   return (
-    <footer data-testid="status-bar" className="relative px-6 py-2.5 border-t border-theme-border-primary bg-gradient-to-r from-theme-bg-primary via-theme-bg-secondary to-theme-bg-primary">
+    <footer data-testid="status-bar" className="relative px-6 py-2 border-t border-theme-border-primary bg-gradient-to-r from-theme-bg-primary via-theme-bg-secondary to-theme-bg-primary">
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-theme-accent-primary/20 to-transparent" />
 

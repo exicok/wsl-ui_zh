@@ -248,6 +248,21 @@ function ActionEditor({ action, onSave, onCancel, distros }: ActionEditorProps) 
             You'll type your password in the terminal if sudo is required.
           </p>
         )}
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={formData.runOnStartup}
+            onChange={(e) => updateField("runOnStartup", e.target.checked)}
+            data-testid="action-run-on-startup-checkbox"
+            className="text-orange-500"
+          />
+          <span className="text-sm text-stone-300">Run on startup</span>
+        </label>
+        {formData.runOnStartup && (
+          <p className="text-xs text-stone-500 ml-6">
+            Automatically runs this action when a matching distribution starts.
+          </p>
+        )}
       </div>
 
       {/* Buttons */}
@@ -410,7 +425,14 @@ export function CustomActionsSettings() {
             >
               <div className="text-2xl">{getIconEmoji(action.icon)}</div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-stone-100">{action.name}</h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-medium text-stone-100">{action.name}</h4>
+                  {action.runOnStartup && (
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded">
+                      Startup
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-stone-500 font-mono truncate">{action.command}</p>
                 <p className="text-xs text-stone-600 mt-1">
                   {action.scope.type === "all" && "All distributions"}

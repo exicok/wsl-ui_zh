@@ -70,6 +70,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -98,6 +99,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -126,6 +128,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -140,6 +143,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 1,
       };
 
@@ -173,6 +177,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -201,6 +206,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -231,6 +237,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -261,6 +268,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -289,6 +297,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -319,6 +328,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 
@@ -347,6 +357,7 @@ describe('QuickActionsMenu - Regex Error Handling', () => {
         requiresSudo: false,
         requiresStopped: false,
         runInTerminal: false,
+        runOnStartup: false,
         order: 0,
       };
 

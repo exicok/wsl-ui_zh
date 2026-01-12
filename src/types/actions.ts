@@ -16,6 +16,7 @@ export interface CustomAction {
   requiresSudo: boolean;    // Prompt for sudo password when executing
   requiresStopped: boolean; // Requires distribution to be stopped before running
   runInTerminal: boolean;   // Run command in user's terminal instead of background
+  runOnStartup: boolean;    // Run automatically when matching distribution starts
   order: number;      // Sort order for display
 }
 
@@ -54,29 +55,7 @@ export const DEFAULT_CUSTOM_ACTION: Omit<CustomAction, "id"> = {
   requiresSudo: false,
   requiresStopped: false,
   runInTerminal: false,
+  runOnStartup: false,
   order: 0,
-};
-
-// Startup action configuration per distribution
-export interface StartupAction {
-  id: string;
-  actionId: string;      // Reference to a custom action, or inline command
-  command?: string;      // Inline command if actionId is empty
-  continueOnError: boolean;
-  timeout: number;       // Timeout in seconds
-}
-
-export interface StartupConfig {
-  distroName: string;
-  actions: StartupAction[];
-  runOnAppStart: boolean;
-  enabled: boolean;
-}
-
-export const DEFAULT_STARTUP_ACTION: Omit<StartupAction, "id"> = {
-  actionId: "",
-  command: "",
-  continueOnError: true,
-  timeout: 60,
 };
 

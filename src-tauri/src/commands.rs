@@ -1,4 +1,4 @@
-use crate::actions::{self, ActionResult, CustomAction, StartupConfig};
+use crate::actions::{self, ActionResult, CustomAction};
 use crate::distro_catalog::{self, ContainerImage, DistroCatalog, DownloadDistro, MsStoreDistroInfo};
 use crate::download;
 use crate::error::AppError;
@@ -861,47 +861,14 @@ pub fn check_action_applies(action_id: String, distro: String) -> bool {
         .unwrap_or(false)
 }
 
-// Startup Actions commands
+// Startup Actions command
 
 #[tauri::command]
-pub fn get_startup_configs() -> Vec<StartupConfig> {
-    actions::load_startup_configs()
-}
-
-#[tauri::command]
-pub fn get_startup_config(distro_name: String) -> Option<StartupConfig> {
+pub fn get_startup_actions_for_distro(distro_name: String) -> Vec<CustomAction> {
     if validate_distro_name(&distro_name).is_err() {
-        return None;
+        return vec![];
     }
-    actions::get_startup_config(&distro_name)
-}
-
-#[tauri::command]
-pub fn save_startup_config(config: StartupConfig) -> Result<Vec<StartupConfig>, String> {
-    validate_distro_name(&config.distro_name).map_err(|e| e.to_string())?;
-    actions::save_startup_config(config)
-}
-
-#[tauri::command]
-pub fn delete_startup_config(distro_name: String) -> Result<Vec<StartupConfig>, String> {
-    validate_distro_name(&distro_name).map_err(|e| e.to_string())?;
-    actions::delete_startup_config(&distro_name)
-}
-
-#[tauri::command]
-pub async fn execute_startup_actions(distro_name: String, id: Option<String>) -> Result<Vec<ActionResult>, String> {
-    validate_distro_name(&distro_name).map_err(|e| e.to_string())?;
-    // Run in blocking thread to avoid freezing UI during long-running startup actions
-    tokio::task::spawn_blocking(move || {
-        actions::execute_startup_actions(&distro_name, id.as_deref())
-    })
-    .await
-    .map_err(|e| format!("Task failed: {}", e))?
-}
-
-#[tauri::command]
-pub fn get_app_startup_distros() -> Vec<String> {
-    actions::get_app_startup_distros()
+    actions::get_startup_actions_for_distro(&distro_name)
 }
 
 /// Install from a rootfs URL with progress events
@@ -1386,7 +1353,6 @@ pub fn reset_mock_state_cmd() -> Result<(), String> {
         download::reset_mock_download();
         metadata::reset_mock_metadata();
         actions::reset_mock_actions();
-        actions::reset_mock_startup_configs();
         Ok(())
     } else {
         Err("reset_mock_state is only available in mock mode".to_string())

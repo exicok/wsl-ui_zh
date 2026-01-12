@@ -9,7 +9,6 @@ import { getVersion } from "@tauri-apps/api/app";
 import { useSettingsStore } from "../store/settingsStore";
 import { wslService, type WslVersionInfo } from "../services/wslService";
 import { CustomActionsSettings } from "./CustomActionsSettings";
-import { StartupActionsSettings } from "./StartupActionsSettings";
 import { DistroSourcesSettings } from "./DistroSourcesSettings";
 import {
   ChevronLeftIcon,
@@ -22,7 +21,6 @@ import {
   ServerIcon,
   FolderIcon,
   SparklesIcon,
-  PlayIcon,
   GridIcon,
   DownloadIcon,
   InfoIcon,
@@ -63,7 +61,6 @@ const ICON_MAP: Record<SettingsIconName, React.FC<{ size?: "sm" | "md" | "lg"; c
   server: ServerIcon,
   folder: FolderIcon,
   sparkles: SparklesIcon,
-  play: PlayIcon,
   grid: GridIcon,
   download: DownloadIcon,
   shield: ShieldIcon,
@@ -403,8 +400,6 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
             {activeTab === "wsl-distro" && <WslDistroSettings />}
 
             {activeTab === "actions" && <CustomActionsSettings />}
-
-            {activeTab === "startup" && <StartupActionsSettings />}
 
             {activeTab === "distros" && <DistroSourcesSettings />}
 

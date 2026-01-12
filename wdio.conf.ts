@@ -104,7 +104,8 @@ export const config: Options.Testrunner = {
   // ==================
   specs: ["./src/test/e2e/specs/**/*.spec.ts"],
   // Exclude screenshot and demo specs from normal test runs (run explicitly via npm scripts)
-  exclude: [
+  // Use INCLUDE_ALL_SPECS=1 to override exclusions (used by demo/screenshot scripts)
+  exclude: process.env.INCLUDE_ALL_SPECS === "1" ? [] : [
     "./src/test/e2e/specs/screenshots.spec.ts",
     "./src/test/e2e/specs/demo.spec.ts",
   ],

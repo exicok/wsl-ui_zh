@@ -1,15 +1,23 @@
 import { create } from "zustand";
-import type { CustomAction, StartupConfig } from "../types/actions";
+import type { CustomAction } from "../types/actions";
 import { actionsService, ActionResult } from "../services/actionsService";
 import { logger } from "../utils/logger";
 
+// Startup action output for displaying in App.tsx
+export interface StartupActionOutput {
+  actionName: string;
+  distro: string;
+  output: string;
+  error?: string;
+}
+
 interface ActionsStore {
   actions: CustomAction[];
-  startupConfigs: StartupConfig[];
   isLoading: boolean;
   error: string | null;
   executionResult: ActionResult | null;
   isExecuting: boolean;
+  startupActionOutput: StartupActionOutput | null;
 
   // Actions
   fetchActions: () => Promise<void>;
@@ -23,22 +31,17 @@ interface ActionsStore {
   importActions: (json: string, merge: boolean) => Promise<void>;
   importActionsFromFile: (path: string, merge: boolean) => Promise<void>;
   clearExecutionResult: () => void;
-
-  // Startup Actions
-  fetchStartupConfigs: () => Promise<void>;
-  getStartupConfig: (distroName: string) => Promise<StartupConfig | null>;
-  saveStartupConfig: (config: StartupConfig) => Promise<void>;
-  deleteStartupConfig: (distroName: string) => Promise<void>;
-  executeStartupActions: (distroName: string, id?: string) => Promise<ActionResult[]>;
+  setStartupActionOutput: (output: StartupActionOutput) => void;
+  clearStartupActionOutput: () => void;
 }
 
 export const useActionsStore = create<ActionsStore>((set) => ({
   actions: [],
-  startupConfigs: [],
   isLoading: false,
   error: null,
   executionResult: null,
   isExecuting: false,
+  startupActionOutput: null,
 
   fetchActions: async () => {
     set({ isLoading: true, error: null });
@@ -173,61 +176,11 @@ export const useActionsStore = create<ActionsStore>((set) => ({
     set({ executionResult: null });
   },
 
-  // Startup Actions
-  fetchStartupConfigs: async () => {
-    try {
-      const startupConfigs = await actionsService.getStartupConfigs();
-      set({ startupConfigs });
-    } catch (error) {
-      logger.error("Failed to fetch startup configs:", "ActionsStore", error);
-    }
+  setStartupActionOutput: (output: StartupActionOutput) => {
+    set({ startupActionOutput: output });
   },
 
-  getStartupConfig: async (distroName: string) => {
-    try {
-      return await actionsService.getStartupConfig(distroName);
-    } catch (error) {
-      logger.error("Failed to get startup config:", "ActionsStore", error);
-      return null;
-    }
-  },
-
-  saveStartupConfig: async (config: StartupConfig) => {
-    set({ isLoading: true, error: null });
-    try {
-      const startupConfigs = await actionsService.saveStartupConfig(config);
-      set({ startupConfigs, isLoading: false });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Failed to save startup config",
-        isLoading: false,
-      });
-    }
-  },
-
-  deleteStartupConfig: async (distroName: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const startupConfigs = await actionsService.deleteStartupConfig(distroName);
-      set({ startupConfigs, isLoading: false });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Failed to delete startup config",
-        isLoading: false,
-      });
-    }
-  },
-
-  executeStartupActions: async (distroName: string, id?: string) => {
-    set({ isExecuting: true });
-    try {
-      const results = await actionsService.executeStartupActions(distroName, id);
-      set({ isExecuting: false });
-      return results;
-    } catch (error) {
-      set({ isExecuting: false });
-      return [];
-    }
+  clearStartupActionOutput: () => {
+    set({ startupActionOutput: null });
   },
 }));
-

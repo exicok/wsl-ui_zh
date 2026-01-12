@@ -5,6 +5,7 @@ import { useMountStore } from "./store/mountStore";
 import { useSettingsStore } from "./store/settingsStore";
 import { useNotificationStore } from "./store/notificationStore";
 import { usePreflightStore } from "./store/preflightStore";
+import { useActionsStore } from "./store/actionsStore";
 import { usePolling } from "./hooks/usePolling";
 import { Header } from "./components/Header";
 import { DistroList } from "./components/DistroList";
@@ -30,6 +31,7 @@ function App() {
   const { settings, loadSettings, updateSetting } = useSettingsStore();
   const { notifications, removeNotification } = useNotificationStore();
   const { checkPreflight, isReady: wslReady } = usePreflightStore();
+  const { startupActionOutput, clearStartupActionOutput } = useActionsStore();
   const [currentPage, setCurrentPage] = useState<AppPage>("main");
   const [showForceRestartConfirm, setShowForceRestartConfirm] = useState(false);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
@@ -177,6 +179,37 @@ function App() {
           onAccept={handleTelemetryAccept}
           onDecline={handleTelemetryDecline}
         />
+        {/* Startup action output dialog */}
+        {startupActionOutput && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/50" onClick={clearStartupActionOutput} />
+            <div className="relative bg-theme-bg-secondary border border-theme-border rounded-lg p-4 max-w-lg w-full mx-4 max-h-[80vh] overflow-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-theme-text-primary">{startupActionOutput.actionName} - Output</h3>
+                <button
+                  onClick={clearStartupActionOutput}
+                  className="text-theme-text-muted hover:text-theme-text-primary"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="font-mono text-xs bg-theme-bg-primary p-3 rounded">
+                {startupActionOutput.output && (
+                  <pre className="text-sm text-theme-text-secondary font-mono whitespace-pre-wrap">{startupActionOutput.output}</pre>
+                )}
+                {startupActionOutput.error && (
+                  <pre className="mt-2 text-sm text-theme-status-error font-mono whitespace-pre-wrap">{startupActionOutput.error}</pre>
+                )}
+                {!startupActionOutput.output && !startupActionOutput.error && (
+                  <p className="text-theme-text-muted italic">No output</p>
+                )}
+              </div>
+              <p className="mt-2 text-xs text-theme-text-muted">
+                Ran on: {startupActionOutput.distro}
+              </p>
+            </div>
+          </div>
+        )}
       </ErrorBoundary>
     );
   }
@@ -185,7 +218,7 @@ function App() {
     <ErrorBoundary>
       <div className="flex flex-col h-screen">
         <Header onOpenSettings={() => setCurrentPage("settings")} />
-        <main ref={mainContentRef} className="flex-1 overflow-auto px-6 pb-6">
+        <main ref={mainContentRef} className="flex-1 overflow-auto px-6 pb-4">
           {/* WSL Preflight Banner - shows when WSL is not installed/configured */}
           <PreflightBanner />
           {/* System Error Banner */}
@@ -258,6 +291,38 @@ function App() {
           onAccept={handleTelemetryAccept}
           onDecline={handleTelemetryDecline}
         />
+
+        {/* Startup action output dialog */}
+        {startupActionOutput && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/50" onClick={clearStartupActionOutput} />
+            <div className="relative bg-theme-bg-secondary border border-theme-border rounded-lg p-4 max-w-lg w-full mx-4 max-h-[80vh] overflow-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-theme-text-primary">{startupActionOutput.actionName} - Output</h3>
+                <button
+                  onClick={clearStartupActionOutput}
+                  className="text-theme-text-muted hover:text-theme-text-primary"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="font-mono text-xs bg-theme-bg-primary p-3 rounded">
+                {startupActionOutput.output && (
+                  <pre className="text-sm text-theme-text-secondary font-mono whitespace-pre-wrap">{startupActionOutput.output}</pre>
+                )}
+                {startupActionOutput.error && (
+                  <pre className="mt-2 text-sm text-theme-status-error font-mono whitespace-pre-wrap">{startupActionOutput.error}</pre>
+                )}
+                {!startupActionOutput.output && !startupActionOutput.error && (
+                  <p className="text-theme-text-muted italic">No output</p>
+                )}
+              </div>
+              <p className="mt-2 text-xs text-theme-text-muted">
+                Ran on: {startupActionOutput.distro}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   );
