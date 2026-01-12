@@ -42,11 +42,12 @@ Use the filter bar to find specific distributions:
 ### Status Bar
 
 The status bar at the bottom of the dashboard shows:
-- Default distribution name
-- Running/total distribution count
-- Total memory usage
-- WSL IP address (click to copy)
+- Health status indicator
+- WSL version with update button
 - Mounted disks count
+- Distribution count (instances/active)
+- Total memory usage
+- Default distribution name
 
 ---
 

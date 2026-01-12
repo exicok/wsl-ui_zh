@@ -9,6 +9,7 @@
  */
 
 import { init, trackEvent as aptabaseTrack } from '@aptabase/web';
+import { getVersion } from '@tauri-apps/api/app';
 import { useSettingsStore } from '../store/settingsStore';
 import { info, debug } from '../utils/logger';
 import type { Distribution, InstallSource } from '../types/distribution';
@@ -18,31 +19,40 @@ import type { Distribution, InstallSource } from '../types/distribution';
 const APTABASE_KEY = import.meta.env.VITE_APTABASE_KEY as string | undefined;
 
 let initialized = false;
+let initPromise: Promise<boolean> | null = null;
 
 /**
  * Initialize Aptabase SDK (called once on first track attempt)
  */
-function initAptabase(): boolean {
+async function initAptabase(): Promise<boolean> {
   if (initialized) return true;
 
-  if (!APTABASE_KEY) {
-    info('[Telemetry] No VITE_APTABASE_KEY set, telemetry disabled');
-    return false;
-  }
+  // Prevent multiple concurrent initializations
+  if (initPromise) return initPromise;
 
-  try {
-    info(`[Telemetry] Initializing Aptabase SDK (key: ${APTABASE_KEY.substring(0, 8)}...)`);
-    init(APTABASE_KEY, {
-      // Use EU host since the key is EU region
-      host: 'https://eu.aptabase.com',
-    });
-    initialized = true;
-    info('[Telemetry] Aptabase SDK initialized successfully');
-    return true;
-  } catch (error) {
-    info(`[Telemetry] Failed to initialize Aptabase: ${error}`);
-    return false;
-  }
+  initPromise = (async () => {
+    if (!APTABASE_KEY) {
+      info('[Telemetry] No VITE_APTABASE_KEY set, telemetry disabled');
+      return false;
+    }
+
+    try {
+      const appVersion = await getVersion().catch(() => 'unknown');
+      info(`[Telemetry] Initializing Aptabase SDK (key: ${APTABASE_KEY.substring(0, 8)}..., version: ${appVersion})`);
+      init(APTABASE_KEY, {
+        host: 'https://eu.aptabase.com',
+        appVersion,
+      });
+      initialized = true;
+      info('[Telemetry] Aptabase SDK initialized successfully');
+      return true;
+    } catch (error) {
+      info(`[Telemetry] Failed to initialize Aptabase: ${error}`);
+      return false;
+    }
+  })();
+
+  return initPromise;
 }
 
 /**
@@ -69,7 +79,7 @@ export async function trackEvent(
   }
 
   // Initialize SDK if needed
-  if (!initAptabase()) {
+  if (!(await initAptabase())) {
     return;
   }
 
