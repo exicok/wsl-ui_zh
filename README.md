@@ -8,7 +8,7 @@ Built with [Tauri](https://tauri.app/) (Rust) and [React](https://react.dev/)
 
 **Developed by [Octasoft Ltd](https://www.octasoft.co.uk)**
 
-![Main Dashboard](docs/screenshots/main-distro-list.png)
+<video src="docs/videos/wsl-ui-demo.mp4" controls width="100%"></video>
 
 ## Features
 
