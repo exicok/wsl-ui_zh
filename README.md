@@ -8,7 +8,7 @@ Built with [Tauri](https://tauri.app/) (Rust) and [React](https://react.dev/)
 
 **Developed by [Octasoft Ltd](https://www.octasoft.co.uk)**
 
-[![Watch the demo](https://img.youtube.com/vi/_mceSKFw3E8/maxresdefault.jpg)](https://youtu.be/_mceSKFw3E8)
+[![Watch the demo](https://img.youtube.com/vi/q59ZtKr7aqw/maxresdefault.jpg)](https://youtu.be/q59ZtKr7aqw)
 
 ## Features
 
