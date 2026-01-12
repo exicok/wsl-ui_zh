@@ -3,12 +3,16 @@ import * as path from "path";
 import * as fs from "fs";
 import { fileURLToPath } from "url";
 import { spawn, spawnSync, type ChildProcess } from "child_process";
+import video from "wdio-video-reporter";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Verbose mode - set VERBOSE=1 to see full debug output
 const isVerbose = process.env.VERBOSE === "1";
+
+// Video recording mode - set RECORD_VIDEO=1 to enable video recording
+const recordVideo = process.env.RECORD_VIDEO === "1";
 
 // Store tauri-driver process reference
 let tauriDriver: ChildProcess | null = null;
@@ -99,7 +103,11 @@ export const config: Options.Testrunner = {
   // Specify Test Files
   // ==================
   specs: ["./src/test/e2e/specs/**/*.spec.ts"],
-  exclude: [],
+  // Exclude screenshot and demo specs from normal test runs (run explicitly via npm scripts)
+  exclude: [
+    "./src/test/e2e/specs/screenshots.spec.ts",
+    "./src/test/e2e/specs/demo.spec.ts",
+  ],
 
   //
   // ============
@@ -147,10 +155,32 @@ export const config: Options.Testrunner = {
         },
       },
     ],
+    // Video reporter - only enabled when RECORD_VIDEO=1
+    ...(recordVideo
+      ? [
+          [
+            video,
+            {
+              saveAllVideos: true,
+              // Slow down video playback (1 = normal, 2 = half speed)
+              videoSlowdownMultiplier: parseInt(process.env.VIDEO_SPEED || "1"),
+              outputDir: "./docs/videos",
+              videoRenderTimeout: 60000,
+              // Preserve original resolution (default downscales to 1200px)
+              videoScale: "-1:-1",
+              // Use mp4 for better quality/compatibility
+              videoFormat: "mp4",
+              // Store temp screenshots in test-results (easier to gitignore/clean)
+              rawPath: "./test-results/.video-screenshots",
+            },
+          ] as const,
+        ]
+      : []),
   ],
   mochaOpts: {
     ui: "bdd",
-    timeout: 60000,
+    // Extended timeout for demo video recording (5 minutes)
+    timeout: process.env.RECORD_VIDEO === "1" ? 300000 : 60000,
   },
 
   //
@@ -223,6 +253,74 @@ export const config: Options.Testrunner = {
     if (tauriDriver && tauriDriver.pid) {
       killProcessTree(tauriDriver.pid);
       tauriDriver = null;
+    }
+
+    // Rename demo video to consistent filename
+    if (recordVideo) {
+      const videoDir = path.join(__dirname, "docs", "videos");
+      const finalName = "wsl-ui-demo.mp4";
+
+      // Wait for video rendering to complete (retry with delays)
+      const maxRetries = 30;
+      const retryDelay = 1000; // 1 second
+
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          if (!fs.existsSync(videoDir)) {
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+
+          const files = fs.readdirSync(videoDir);
+          // Find all wsl-ui video files and get the most recent one
+          const videoFiles = files
+            .filter(f => f.startsWith("wsl-ui") && f.endsWith(".mp4") && f !== finalName)
+            .map(f => ({
+              name: f,
+              mtime: fs.statSync(path.join(videoDir, f)).mtime.getTime()
+            }))
+            .sort((a, b) => b.mtime - a.mtime);
+
+          if (videoFiles.length === 0) {
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+
+          const latestVideo = videoFiles[0].name;
+          const oldPath = path.join(videoDir, latestVideo);
+          const newPath = path.join(videoDir, finalName);
+
+          // Remove existing demo file if it exists
+          if (fs.existsSync(newPath)) {
+            fs.unlinkSync(newPath);
+          }
+
+          // Try to rename - will fail if file is locked
+          fs.renameSync(oldPath, newPath);
+          console.log(`\nDemo video saved: docs/videos/${finalName}\n`);
+
+          // Clean up any other old wsl-ui video files
+          for (let i = 1; i < videoFiles.length; i++) {
+            const oldFile = path.join(videoDir, videoFiles[i].name);
+            try {
+              if (fs.existsSync(oldFile)) {
+                fs.unlinkSync(oldFile);
+              }
+            } catch {
+              // Ignore cleanup errors
+            }
+          }
+
+          break; // Success - exit retry loop
+        } catch (err) {
+          if (attempt < maxRetries - 1) {
+            console.log(`Waiting for video to finish rendering... (${attempt + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+          } else {
+            console.error("Could not rename video file:", err);
+          }
+        }
+      }
     }
   },
 

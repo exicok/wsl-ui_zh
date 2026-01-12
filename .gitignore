@@ -65,6 +65,8 @@ geckodriver
 # WebDriverIO
 wdio-logs/
 errorShots/
+.video-reporter-screenshots/
+docs/videos/test-results/
 
 # Vite
 *.local
