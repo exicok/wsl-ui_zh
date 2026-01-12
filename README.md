@@ -10,8 +10,6 @@ Built with [Tauri](https://tauri.app/) (Rust) and [React](https://react.dev/)
 
 [![Watch the demo](https://img.youtube.com/vi/_mceSKFw3E8/maxresdefault.jpg)](https://youtu.be/_mceSKFw3E8)
 
-> **[Watch Demo Video](https://youtu.be/_mceSKFw3E8)** - See WSL UI in action
-
 ## Features
 
 - **Dashboard** - View all distributions with real-time status, CPU, memory, and disk usage
