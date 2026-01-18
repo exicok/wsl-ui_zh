@@ -459,12 +459,19 @@ pub fn resize_distribution(name: &str, size: &str) -> Result<(), WslError> {
 pub fn compact_distribution(name: &str) -> Result<CompactResult, WslError> {
     info!("Compacting distribution disk for '{}'", name);
 
-    // Verify distro exists and get VHDX path
+    // Verify distro exists and check WSL version
     let distros = list_distributions()?;
     let distro = distros
         .iter()
         .find(|d| d.name == name)
         .ok_or_else(|| WslError::DistroNotFound(name.to_string()))?;
+
+    // WSL1 doesn't use VHDX - files are stored directly in a folder
+    if distro.version == 1 {
+        return Err(WslError::CommandFailed(
+            "Compact is only available for WSL2 distributions. WSL1 does not use virtual disk files.".to_string()
+        ));
+    }
 
     let vhdx_path = resource_monitor()
         .get_distro_vhdx_path(name)
