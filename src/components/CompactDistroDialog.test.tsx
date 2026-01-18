@@ -221,7 +221,7 @@ describe('CompactDistroDialog', () => {
       });
 
       expect(screen.getByTestId('compact-progress')).toBeInTheDocument();
-      expect(screen.getByText(/Compacting disk.../)).toBeInTheDocument();
+      expect(screen.getByText(/Optimizing disk.../)).toBeInTheDocument();
     });
 
     it('shows elapsed time counter while compacting', async () => {
@@ -364,12 +364,12 @@ describe('CompactDistroDialog', () => {
       expect(mockAddNotification).toHaveBeenCalledWith({
         type: 'success',
         title: 'Disk Compacted',
-        message: expect.stringContaining('Ubuntu disk compacted successfully'),
+        message: expect.stringContaining('Ubuntu:'),
       });
       expect(mockAddNotification).toHaveBeenCalledWith({
         type: 'success',
         title: 'Disk Compacted',
-        message: expect.stringContaining('Saved 2.00 GB'),
+        message: expect.stringContaining('saved 2.00 GB'),
       });
     });
 
