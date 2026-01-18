@@ -7,6 +7,7 @@ import { wslService } from "../services/wslService";
 import { CloneDialog } from "./CloneDialog";
 import { MoveDistroDialog } from "./MoveDistroDialog";
 import { ResizeDistroDialog } from "./ResizeDistroDialog";
+import { CompactDistroDialog } from "./CompactDistroDialog";
 import { SetDefaultUserDialog } from "./SetDefaultUserDialog";
 import { SetVersionDialog } from "./SetVersionDialog";
 import { RenameDialog } from "./RenameDialog";
@@ -37,6 +38,7 @@ import {
   PauseIcon,
   PowerIcon,
   InfoIcon,
+  CompressIcon,
 } from "./icons";
 
 interface QuickActionsMenuProps {
@@ -67,6 +69,7 @@ export function QuickActionsMenu({ distro, disabled, onOpenChange }: QuickAction
   const [showCloneDialog, setShowCloneDialog] = useState(false);
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [showResizeDialog, setShowResizeDialog] = useState(false);
+  const [showCompactDialog, setShowCompactDialog] = useState(false);
   const [showSetUserDialog, setShowSetUserDialog] = useState(false);
   const [showSetVersionDialog, setShowSetVersionDialog] = useState(false);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
@@ -513,6 +516,19 @@ export function QuickActionsMenu({ distro, disabled, onOpenChange }: QuickAction
                   </button>
                   <button
                     onClick={() => {
+                      // Compact handles its own start/fstrim/shutdown flow - no pre-check needed
+                      setShowCompactDialog(true);
+                      setIsOpen(false);
+                      setShowManageSubmenu(false);
+                    }}
+                    data-testid="manage-action-compact"
+                    className="w-full flex items-center gap-3 px-6 py-2 text-sm text-left text-theme-text-secondary hover:bg-theme-bg-tertiary hover:text-theme-text-primary transition-all"
+                  >
+                    <span className="text-theme-text-muted"><CompressIcon size="sm" /></span>
+                    Compact Disk...
+                  </button>
+                  <button
+                    onClick={() => {
                       setShowSetUserDialog(true);
                       setIsOpen(false);
                       setShowManageSubmenu(false);
@@ -688,6 +704,12 @@ export function QuickActionsMenu({ distro, disabled, onOpenChange }: QuickAction
         isOpen={showResizeDialog}
         distro={distro}
         onClose={() => setShowResizeDialog(false)}
+      />
+
+      <CompactDistroDialog
+        isOpen={showCompactDialog}
+        distro={distro}
+        onClose={() => setShowCompactDialog(false)}
       />
 
       <SetDefaultUserDialog

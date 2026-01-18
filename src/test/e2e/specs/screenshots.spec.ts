@@ -289,6 +289,24 @@ describe("Screenshot Capture", () => {
       await browser.pause(300);
     });
 
+    it("captures Compact Disk dialog", async () => {
+      await openQuickActions("Debian");
+
+      const manageAction = await $(selectors.manageSubmenu);
+      await manageAction.click();
+      await browser.pause(200);
+
+      const compactAction = await $(selectors.compactAction);
+      await compactAction.click();
+      await waitForDialog('[role="dialog"]');
+      // Wait for size info to load
+      await browser.pause(500);
+      await saveScreenshot("dialog-compact-disk");
+
+      await browser.keys("Escape");
+      await browser.pause(300);
+    });
+
     it("captures Set Default User dialog", async () => {
       await openQuickActions("Debian");
 

@@ -110,6 +110,13 @@ function App() {
     }
   }, [error]);
 
+  // Scroll to top when notifications appear so user can see them
+  useEffect(() => {
+    if (notifications.length > 0 && mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [notifications.length]);
+
   // Initialize centralized polling (handles distros, resources, health)
   usePolling();
 
