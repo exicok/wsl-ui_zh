@@ -36,7 +36,7 @@ type InstallMode = "quick" | "custom" | "community" | "container";
 
 const MODE_CONFIG = {
   quick: {
-    label: "Quick Install",
+    label: "快速安装l",
     description: "Install from Microsoft Store",
     color: "emerald",
     Icon: StoreIcon,
@@ -54,7 +54,7 @@ const MODE_CONFIG = {
     Icon: ContainerIcon,
   },
   custom: {
-    label: "Download",
+    label: "下载",
     description: "Direct download with custom name",
     color: "blue",
     Icon: SourceDownloadIcon,
@@ -622,8 +622,8 @@ export function NewDistroDialog({ isOpen, onClose }: NewDistroDialogProps) {
 
                 // Map mode keys to data-testid values
                 const testIdMap: Record<InstallMode, string> = {
-                  quick: "quick-install",
-                  custom: "download",
+                  quick: "快速安装",
+                  custom: "下载",
                   community: "lxc",
                   container: "container",
                 };
