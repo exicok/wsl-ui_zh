@@ -5,6 +5,51 @@ All notable changes to WSL UI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0](https://github.com/exicok/wsl-ui_zh/compare/v0.15.0...v0.16.0) (2026-01-20)
+
+
+### Features
+
+* Accessibility and high contrast theme ([5310b2f](https://github.com/exicok/wsl-ui_zh/commit/5310b2f55f5fc28389b81d6a923b8a6687637177))
+* Accessibility and high contrast theme ([c5c3a4c](https://github.com/exicok/wsl-ui_zh/commit/c5c3a4c717d50be8837e560e777cee7f135bb9d7))
+* Add 300x300 icon for Microsoft Store ([6c7fc55](https://github.com/exicok/wsl-ui_zh/commit/6c7fc556be8f9ca11b4dc5e01667a407246e66fd))
+* add demo video ([db05022](https://github.com/exicok/wsl-ui_zh/commit/db05022eecc1a26ab8996b6374db86b0a9e6ea4d))
+* Add force stop when stopping distro is taking too long. ([206ec06](https://github.com/exicok/wsl-ui_zh/commit/206ec06a515b7b036496f2cacc04d37a1603f4c9))
+* add lightweight tracking and update privacy policy ([1c49cc2](https://github.com/exicok/wsl-ui_zh/commit/1c49cc29d5032ea327305e37625000577b3e9dd9))
+* add lightweight tracking and update privacy policy ([7e5903f](https://github.com/exicok/wsl-ui_zh/commit/7e5903f5493478faf54c7aa20226b9ada5c39804))
+* Add support for arm64 ([687e721](https://github.com/exicok/wsl-ui_zh/commit/687e72161e6f938a3e4f1f1d55685be8c70f605b))
+* Add version to tracking info ([2ccbf10](https://github.com/exicok/wsl-ui_zh/commit/2ccbf10e167650c3c2cc75011fe6c010f05d369a))
+* add video to readme ([af1b6cd](https://github.com/exicok/wsl-ui_zh/commit/af1b6cd1b7ed25c13951a3f2fd72060b8a71e04a))
+* add video to readme ([58f5ead](https://github.com/exicok/wsl-ui_zh/commit/58f5ead8e77730d875b0d7376234770cf9eee9cb))
+* Compact vhdx support - invokes UAC as elevated permission required. ([a5601a0](https://github.com/exicok/wsl-ui_zh/commit/a5601a0486e28f0d0af54f4f2c2ddac2184d0ed0))
+* Fix editing of fields halfway through pinging user to end of the line after single keypress. ([25b4346](https://github.com/exicok/wsl-ui_zh/commit/25b4346080b80d595413465add8c308d66a64cc7))
+* fix release ([56cb9de](https://github.com/exicok/wsl-ui_zh/commit/56cb9decd9b35a382eb7466de07c1f5f488d69c2))
+* fix release ([c1823ed](https://github.com/exicok/wsl-ui_zh/commit/c1823ed181af999baf219d2e02c5ff3b7919c453))
+* fix tracking ([8019317](https://github.com/exicok/wsl-ui_zh/commit/80193173df42a4b7c03f36627fb60b554d477f7f))
+* fix tracking ([6253a27](https://github.com/exicok/wsl-ui_zh/commit/6253a2712a8e875a97c793a0c5ae2d6555701446))
+* improve tracking to include source types ([b7d19a5](https://github.com/exicok/wsl-ui_zh/commit/b7d19a518f537c012dc626a7304783d9883c93dc))
+* New app screenshots ([bea0170](https://github.com/exicok/wsl-ui_zh/commit/bea01701ef4b6d32c1d09bc6b91398d2dc6c5aa0))
+* New video at 1280 x 720 ([93e1da8](https://github.com/exicok/wsl-ui_zh/commit/93e1da8cc204e15c1edead27ed2ba9ada2a6348e))
+* Reduce vertical spacing to fit 1280 x 720 ([93e1da8](https://github.com/exicok/wsl-ui_zh/commit/93e1da8cc204e15c1edead27ed2ba9ada2a6348e))
+* Remove some functions from WSL 1 distros as not supported (clone, compact, sparse mode, resize) ([1b81015](https://github.com/exicok/wsl-ui_zh/commit/1b81015c3340ee1d130d6dcf53048e2787061139))
+* Remove startup actions and replace with custom actions that run on startup ([93e1da8](https://github.com/exicok/wsl-ui_zh/commit/93e1da8cc204e15c1edead27ed2ba9ada2a6348e))
+* screenshots for distros ([225cc13](https://github.com/exicok/wsl-ui_zh/commit/225cc132b1efca353cdbeb0aeabf9820e5816c2b))
+* screenshots for distros ([3220832](https://github.com/exicok/wsl-ui_zh/commit/32208326f5558601478ba3a9909bc1ceb74e0f27))
+* Smaller installers and portable exe in releases ([e799e54](https://github.com/exicok/wsl-ui_zh/commit/e799e54d69d61b5a92505f4e72b27716c6f440f3))
+* Start app in 1280 x 720 ([93e1da8](https://github.com/exicok/wsl-ui_zh/commit/93e1da8cc204e15c1edead27ed2ba9ada2a6348e))
+* tidy rust warnings ([13b1ffe](https://github.com/exicok/wsl-ui_zh/commit/13b1ffec499a0410529e8f5f3dce98fb710c235d))
+* tidy rust warnings ([fe7a26d](https://github.com/exicok/wsl-ui_zh/commit/fe7a26d8245b5fe4231822f0f44e80964424956c))
+* Use frontend tracking only. Fix e2e tests ([d548bb7](https://github.com/exicok/wsl-ui_zh/commit/d548bb7a5fbd5e50c945656817285eef58124174))
+
+
+### Bug Fixes
+
+* Clean tag format and robust version parsing ([23849bf](https://github.com/exicok/wsl-ui_zh/commit/23849bf1a46c674493446dacca850f95d7a8b247))
+* Closing app and then clicking off close dialog should take user back to UI - not minimise app to tray. ([0ab99b4](https://github.com/exicok/wsl-ui_zh/commit/0ab99b4d88d537d49dbc10e09785434daefdb7e8))
+* Consistent naming for MSIX output file ([db36688](https://github.com/exicok/wsl-ui_zh/commit/db36688d09ab0a5d6969967c17c38d549d8a3bc5))
+* Correct MSIX build paths and executable name ([d92831d](https://github.com/exicok/wsl-ui_zh/commit/d92831dd56bc8b9bc652dfa439f1aab5ae500b1c))
+* msi installer image justified to left ([7f21e99](https://github.com/exicok/wsl-ui_zh/commit/7f21e99671966d95244d72a09684d0e6806c7cea))
+
 ## [0.15.0](https://github.com/octasoft-ltd/wsl-ui/compare/v0.14.0...v0.15.0) (2026-01-18)
 
 
